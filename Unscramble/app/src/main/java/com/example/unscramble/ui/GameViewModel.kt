@@ -63,20 +63,20 @@ class GameViewModel : ViewModel() {
 //        so they can update the UI based on the new state.
     }
 
-    fun updateUserGuess(guessedWord:String){
-        userGuess=guessedWord
+    fun updateUserGuess(guessedWord: String) {
+        userGuess = guessedWord
 
     }
 
-    fun checkUserGuess(){
-        if(userGuess.equals(currentWord,ignoreCase = true)){
-            val updateScore=_uiState.value.score.plus(SCORE_INCREASE)
+    fun checkUserGuess() {
+        if (userGuess.equals(currentWord, ignoreCase = true)) {
+            val updatedScore = _uiState.value.score.plus(SCORE_INCREASE)
+            updateGameState(updatedScore)
 
-        }
-        else{
+        } else {
             //user guess is wrong-> show error
-            _uiState.update {curentState->
-                curentState.copy(isGuessedWordWrong=true) //copy fun allows to copy an object->also allows modification if needed
+            _uiState.update { curentState ->
+                curentState.copy(isGuessedWordWrong = true) //copy fun allows to copy an object->also allows modification if needed
             }
 
         }
@@ -84,6 +84,25 @@ class GameViewModel : ViewModel() {
         updateUserGuess("")
     }
 
+    fun updateGameState(updatedScore: Int) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isGuessedWordWrong = false,
+                currentScrambledWord = pickRandomWordAndShuffle(),
+                score = updatedScore,
+                currentWordCount = currentState.currentWordCount.inc()
+            )
+
+        }
+
+    }
+
+    fun skipWord(){
+        updateGameState(_uiState.value.score)
+        //reset user guess
+        updateUserGuess("")
+
+    }
 
 
     init {
