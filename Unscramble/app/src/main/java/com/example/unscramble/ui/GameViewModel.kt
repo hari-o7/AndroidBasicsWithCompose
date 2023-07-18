@@ -1,12 +1,19 @@
 package com.example.unscramble.ui
 
+
 import androidx.lifecycle.ViewModel
 import com.example.unscramble.data.allWords
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 
 class GameViewModel : ViewModel() {
+
+    var userGuess by mutableStateOf("")
 
     //    game ui state
     //    holds the current UI state of the game
@@ -52,6 +59,11 @@ class GameViewModel : ViewModel() {
 //        it updates the UI state and notifies any components
 //        observing the uiState state flow about the state change,
 //        so they can update the UI based on the new state.
+    }
+
+    fun updateUserGuess(guessedWord:String){
+        userGuess=guessedWord
+
     }
 
     init {

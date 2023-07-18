@@ -38,11 +38,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble.R
 import com.example.unscramble.ui.theme.UnscrambleTheme
 
 @Composable
-fun GameScreen() {
+fun GameScreen(
+    gameViewModel: GameViewModel = viewModel()
+) {
+    //gameUiState is a new variable that holds the latest value
+    //of state extracted from uiState of viewModel..
+    //collectUiState collects latest values and passes them to this val
+    val gameUiState by gameViewModel.uiState.collectAsState()
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     Column(
@@ -59,6 +66,11 @@ fun GameScreen() {
         )
 
         GameLayout(
+            currentScrambledWord = gameUiState.currentScrambledWord,
+            userGuess = gameViewModel.userGuess,
+            onUserGuessChanged = {gameViewModel.updateUserGuess(it)},
+            onKeyboardDone = {},
+
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -112,7 +124,14 @@ fun GameStatus(score: Int, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameLayout(modifier: Modifier = Modifier) {
+fun GameLayout(
+    currentScrambledWord: String,
+    userGuess:String,
+    onUserGuessChanged:(String)->Unit,
+    onKeyboardDone:()->Unit,
+
+    modifier: Modifier = Modifier
+) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     Card(
@@ -135,7 +154,7 @@ fun GameLayout(modifier: Modifier = Modifier) {
                 color = colorScheme.onPrimary
             )
             Text(
-                text = "scrambleun",
+                text = currentScrambledWord,
                 style = typography.displayMedium
             )
             Text(
@@ -144,19 +163,19 @@ fun GameLayout(modifier: Modifier = Modifier) {
                 style = typography.titleMedium
             )
             OutlinedTextField(
-                value = "",
+                value = userGuess,
                 singleLine = true,
                 shape = shapes.large,
                 modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.textFieldColors(containerColor = colorScheme.surface),
-                onValueChange = { },
+                onValueChange = onUserGuessChanged,
                 label = { Text(stringResource(R.string.enter_your_word)) },
                 isError = false,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { }
+                    onDone = {onKeyboardDone() }
                 )
             )
         }
