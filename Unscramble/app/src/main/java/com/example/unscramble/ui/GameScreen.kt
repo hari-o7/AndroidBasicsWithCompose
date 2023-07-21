@@ -96,7 +96,7 @@ fun GameScreen(
             }
 
             OutlinedButton(
-                onClick = {gameViewModel.skipWord() },
+                onClick = { gameViewModel.skipWord() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -107,6 +107,12 @@ fun GameScreen(
         }
 
         GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
+    }
+    if (gameUiState.isGameOver) {
+        FinalScoreDialog(
+            score = gameUiState.score,
+            onPlayAgain = { gameViewModel.resetGame() })
+
     }
 }
 
@@ -129,7 +135,7 @@ fun GameLayout(
     currentScrambledWord: String,
     isGuessWrong: Boolean,
     userGuess: String,
-    wordCount:Int,
+    wordCount: Int,
     onUserGuessChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
 
